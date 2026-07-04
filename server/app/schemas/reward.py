@@ -19,6 +19,14 @@ class RewardOut(BaseModel):
     created_at: datetime
 
 
+class RewardBadge(BaseModel):
+    code: str
+    label: str | None
+    awarded_at: datetime
+
+
 class PaginatedRewards(BaseModel):
     data: list[RewardOut]
     meta: PageMeta
+    total_points: int          # profile summary: current points balance
+    badges: list[RewardBadge]  # profile summary: distinct badges earned

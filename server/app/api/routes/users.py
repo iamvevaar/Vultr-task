@@ -20,11 +20,11 @@ from app.core.database import get_db
 from app.models.activity import UserDailyActivity
 from app.models.challenge import Challenge
 from app.models.progress import ChallengeProgress
-from app.models.reward import RewardLedger
+from app.models.reward import RewardLedger, RewardType, UserPoints
 from app.models.user import User
 from app.schemas.challenge import ChallengeWithProgress
 from app.schemas.common import PageMeta
-from app.schemas.reward import PaginatedRewards, RewardOut
+from app.schemas.reward import PaginatedRewards, RewardBadge, RewardOut
 from app.schemas.streak import ActivityDay, StreakOut, StreaksResponse
 from app.services.evaluators import current_streak, longest_consecutive_run
 
@@ -117,4 +117,28 @@ def my_rewards(
         for r, name in rows
     ]
     pages = (total + limit - 1) // limit
-    return PaginatedRewards(data=data, meta=PageMeta(page=page, limit=limit, total=total, pages=pages))
+
+    # Profile summary alongside the ledger: the points balance and earned badges.
+    # (badges/points span the whole history, not just this page.)
+    total_points = db.scalar(
+        select(UserPoints.total_points).where(UserPoints.user_id == current_user.id)
+    ) or 0
+
+    badge_rows = db.scalars(
+        select(RewardLedger)
+        .where(RewardLedger.user_id == current_user.id, RewardLedger.reward_type == RewardType.badge)
+        .order_by(RewardLedger.created_at)
+    ).all()
+    seen: set[str] = set()
+    badges: list[RewardBadge] = []
+    for r in badge_rows:
+        if r.badge_code and r.badge_code not in seen:
+            seen.add(r.badge_code)
+            badges.append(RewardBadge(code=r.badge_code, label=r.label, awarded_at=r.created_at))
+
+    return PaginatedRewards(
+        data=data,
+        meta=PageMeta(page=page, limit=limit, total=total, pages=pages),
+        total_points=total_points,
+        badges=badges,
+    )

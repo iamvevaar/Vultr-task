@@ -96,3 +96,25 @@ export type StreakOut = {
 export type ActivityDay = { date: string; event_type: string };
 
 export type StreaksResponse = { streaks: StreakOut[]; activity: ActivityDay[] };
+
+// --- Rewards / profile ---
+
+export type RewardEntry = {
+  id: number;
+  reward_type: "points" | "badge";
+  amount: number;
+  badge_code: string | null;
+  label: string | null;
+  source_challenge_id: number;
+  challenge_name: string | null;
+  created_at: string;
+};
+
+export type RewardBadge = { code: string; label: string | null; awarded_at: string };
+
+export type RewardsPage = {
+  data: RewardEntry[];
+  meta: PageMeta;
+  total_points: number;
+  badges: RewardBadge[];
+};
