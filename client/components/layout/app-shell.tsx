@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { ME_QUERY_KEY, useCurrentUser } from "@/hooks/use-current-user";
 import { useAuthModal } from "@/components/auth/auth-modal";
 import { WeeklyWidget } from "@/components/challenges/weekly-widget";
+import { LeaderboardPreview } from "@/components/leaderboard/leaderboard-preview";
 import { Button, buttonVariants } from "@/components/ui/button";
 
 const NAV = [
@@ -121,11 +122,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <aside className="m-4 hidden h-[calc(100vh-2rem)] w-72 shrink-0 flex-col gap-4 overflow-y-auto rounded-lg border border-border bg-surface-1 p-4 lg:flex">
         {/* Weekly widget is here in the shared layout → present on every page, polling live. */}
         <WeeklyWidget />
-
-        <div className="rounded-xl border border-border bg-surface-2 p-4">
-          <p className="text-xs font-medium uppercase tracking-widest text-subtle">Top This Week</p>
-          <p className="mt-2 text-sm text-muted-foreground">Leaderboard preview coming soon.</p>
-        </div>
+        <LeaderboardPreview />
       </aside>
     </div>
   );

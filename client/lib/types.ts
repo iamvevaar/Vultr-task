@@ -118,3 +118,14 @@ export type RewardsPage = {
   total_points: number;
   badges: RewardBadge[];
 };
+
+// --- Leaderboard ---
+
+export type LeaderboardEntry = {
+  rank: number;
+  user_id: number;
+  username: string;
+  total_points: number;
+};
+
+export type LeaderboardPage = { data: LeaderboardEntry[]; meta: PageMeta };
