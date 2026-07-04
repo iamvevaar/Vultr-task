@@ -15,3 +15,21 @@ export type AuthResponse = {
   token_type: string;
   user: User;
 };
+
+// --- Forum ---
+
+export type Author = { id: number; username: string };
+
+export type PostSummary = {
+  id: number;
+  title: string;
+  body: string;
+  author: Author;
+  view_count: number;
+  comment_count: number;
+  created_at: string;
+};
+
+export type PageMeta = { page: number; limit: number; total: number; pages: number };
+
+export type Paginated<T> = { data: T[]; meta: PageMeta };
