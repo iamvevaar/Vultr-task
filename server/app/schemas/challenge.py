@@ -16,6 +16,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.models.challenge import ChallengeCadence, ChallengeStatus, ChallengeType
+from app.models.progress import ProgressState
 
 
 # --- validation helpers (the heart of "data-driven but validated") ----------
@@ -116,3 +117,72 @@ class ChallengeOut(BaseModel):
     created_at: datetime
     updated_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+
+# --- user-facing: a challenge together with the caller's progress -----------
+
+class ProgressInfo(BaseModel):
+    current_value: int
+    target: int
+    percent: int          # 0..100, capped
+    state: ProgressState
+    completed_at: datetime | None
+
+
+class ChallengeWithProgress(BaseModel):
+    id: int
+    name: str
+    description: str
+    type: ChallengeType
+    event_type: str
+    rule_config: dict[str, Any]
+    reward: dict[str, Any]
+    start_at: datetime
+    end_at: datetime
+    cadence: ChallengeCadence
+    status: ChallengeStatus
+    progress: ProgressInfo
+
+    @classmethod
+    def from_models(cls, challenge, progress) -> "ChallengeWithProgress":
+        """Build from a Challenge + its (optional) ChallengeProgress row.
+
+        The target is derived from the type's rule_config, so the frontend can
+        render "3/5" or a ring without knowing the rules. Missing progress = 0.
+        """
+        if challenge.type == ChallengeType.count:
+            target = int(challenge.rule_config.get("target", 1))
+        elif challenge.type == ChallengeType.streak:
+            target = int(challenge.rule_config.get("days", 1))
+        else:
+            target = 1
+
+        if progress is not None:
+            current = progress.current_value
+            info = ProgressInfo(
+                current_value=current,
+                target=target,
+                percent=min(100, round(current / target * 100)) if target else 0,
+                state=progress.state,
+                completed_at=progress.completed_at,
+            )
+        else:
+            info = ProgressInfo(
+                current_value=0, target=target, percent=0,
+                state=ProgressState.in_progress, completed_at=None,
+            )
+
+        return cls(
+            id=challenge.id,
+            name=challenge.name,
+            description=challenge.description,
+            type=challenge.type,
+            event_type=challenge.event_type,
+            rule_config=challenge.rule_config,
+            reward=challenge.reward,
+            start_at=challenge.start_at,
+            end_at=challenge.end_at,
+            cadence=challenge.cadence,
+            status=challenge.status,
+            progress=info,
+        )

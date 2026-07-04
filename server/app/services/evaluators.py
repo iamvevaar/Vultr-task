@@ -79,3 +79,21 @@ EVALUATORS = {
     ChallengeType.count: _evaluate_count,
     ChallengeType.streak: _evaluate_streak,
 }
+
+
+# --- public helpers reused by the read endpoints (/users/me/streaks) ---------
+
+def longest_consecutive_run(days) -> int:
+    """Public wrapper: longest run of consecutive days in an iterable of dates."""
+    return _longest_consecutive_run(list(days))
+
+
+def current_streak(days, today: date) -> int:
+    """Length of the run of consecutive days ending TODAY (0 if not active today)."""
+    dayset = set(days)
+    if today not in dayset:
+        return 0
+    length = 1
+    while (today - timedelta(days=length)) in dayset:
+        length += 1
+    return length

@@ -7,6 +7,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.common import PageMeta
+
 
 class AuthorOut(BaseModel):
     """Minimal public info about a user, embedded in posts/comments."""
@@ -71,13 +73,6 @@ CommentOut.model_rebuild()
 
 # --- Pagination -------------------------------------------------------------
 
-class PageMeta(BaseModel):
-    page: int
-    limit: int
-    total: int
-    pages: int
-
-
 class PaginatedPosts(BaseModel):
     data: list[PostSummary]
-    meta: PageMeta
+    meta: PageMeta  # imported from schemas.common

@@ -1,0 +1,24 @@
+"""Schemas for the user-facing reward ledger."""
+
+from datetime import datetime
+
+from pydantic import BaseModel
+
+from app.models.reward import RewardType
+from app.schemas.common import PageMeta
+
+
+class RewardOut(BaseModel):
+    id: int
+    reward_type: RewardType
+    amount: int
+    badge_code: str | None
+    label: str | None
+    source_challenge_id: int
+    challenge_name: str | None   # joined in for display
+    created_at: datetime
+
+
+class PaginatedRewards(BaseModel):
+    data: list[RewardOut]
+    meta: PageMeta
