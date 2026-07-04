@@ -11,7 +11,7 @@ from fastapi import Depends, FastAPI
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.api.routes import auth, events
+from app.api.routes import auth, events, posts
 from app.core.database import get_db
 from app.core.errors import install_error_handlers
 
@@ -24,6 +24,7 @@ install_error_handlers(app)
 # auth.router's own "/auth" prefix yields final paths like /api/auth/register.
 app.include_router(auth.router, prefix="/api")
 app.include_router(events.router, prefix="/api")
+app.include_router(posts.router, prefix="/api")
 
 
 @app.get("/api/health")

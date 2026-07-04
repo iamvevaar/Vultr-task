@@ -10,6 +10,7 @@ Importing every model here does two jobs:
 
 from app.core.database import Base
 from app.models.event import Event, EventStatus
+from app.models.post import Comment, Post
 from app.models.user import User, UserRole
 
-__all__ = ["Base", "User", "UserRole", "Event", "EventStatus"]
+__all__ = ["Base", "User", "UserRole", "Event", "EventStatus", "Post", "Comment"]
