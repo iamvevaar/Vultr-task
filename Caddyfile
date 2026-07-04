@@ -1,0 +1,24 @@
+# Caddy config. {$DOMAIN} is read from the environment (set in .env).
+# Caddy automatically provisions + renews a Let's Encrypt TLS certificate for
+# the domain, so everything is HTTPS with zero cert management.
+
+{$DOMAIN} {
+	encode gzip
+
+	# API + Swagger go to the backend. (Order matters: these match before the
+	# catch-all below.)
+	handle /api/* {
+		reverse_proxy api:8000
+	}
+	handle /docs* {
+		reverse_proxy api:8000
+	}
+	handle /openapi.json {
+		reverse_proxy api:8000
+	}
+
+	# Everything else is the Next.js frontend.
+	handle {
+		reverse_proxy frontend:3000
+	}
+}
