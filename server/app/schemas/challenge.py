@@ -10,6 +10,7 @@ These functions are reused by both create (in a Pydantic validator) and update
 (in the route), so the rules live in exactly one place.
 """
 
+import uuid
 from datetime import datetime
 from typing import Any
 
@@ -102,7 +103,7 @@ class ChallengeUpdate(BaseModel):
 # --- response schema --------------------------------------------------------
 
 class ChallengeOut(BaseModel):
-    id: int
+    id: uuid.UUID
     name: str
     description: str
     type: ChallengeType
@@ -113,7 +114,7 @@ class ChallengeOut(BaseModel):
     reward: dict[str, Any]
     cadence: ChallengeCadence
     status: ChallengeStatus
-    created_by: int
+    created_by: uuid.UUID
     created_at: datetime
     updated_at: datetime
     model_config = ConfigDict(from_attributes=True)
@@ -130,7 +131,7 @@ class ProgressInfo(BaseModel):
 
 
 class ChallengeWithProgress(BaseModel):
-    id: int
+    id: uuid.UUID
     name: str
     description: str
     type: ChallengeType

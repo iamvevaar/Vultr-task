@@ -11,6 +11,7 @@ Every write action funnels through record_event() — the same idempotent path a
 the public /events endpoint — so the forum is just another event producer.
 """
 
+import uuid
 from datetime import datetime
 from typing import Literal
 from zoneinfo import ZoneInfo
@@ -137,14 +138,14 @@ def create_post(
         event_id=f"{EVENT_POST_CREATED}:{post.id}",
         user_id=current_user.id,
         event_type=EVENT_POST_CREATED,
-        payload={"post_id": post.id},
+        payload={"post_id": str(post.id)},
     )
     return _post_detail(post)
 
 
 @router.get("/{post_id}", response_model=PostDetail)
 def get_post(
-    post_id: int,
+    post_id: uuid.UUID,
     current_user: User | None = Depends(get_optional_user),  # public: guests allowed
     db: Session = Depends(get_db),
 ):
@@ -162,7 +163,7 @@ def get_post(
             event_id=f"{EVENT_POST_VIEWED}:{current_user.id}:{post.id}:{today}",
             user_id=current_user.id,
             event_type=EVENT_POST_VIEWED,
-            payload={"post_id": post.id},
+            payload={"post_id": str(post.id)},
         )
         if created:
             post.view_count += 1
@@ -174,7 +175,7 @@ def get_post(
 
 @router.post("/{post_id}/comments", response_model=CommentOut, status_code=status.HTTP_201_CREATED)
 def add_comment(
-    post_id: int,
+    post_id: uuid.UUID,
     body: CommentCreate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -206,7 +207,7 @@ def add_comment(
         event_id=f"{EVENT_COMMENT_POSTED}:{comment.id}",
         user_id=current_user.id,
         event_type=EVENT_COMMENT_POSTED,
-        payload={"post_id": post_id, "comment_id": comment.id},
+        payload={"post_id": str(post_id), "comment_id": str(comment.id)},
     )
 
     return CommentOut(
@@ -222,8 +223,8 @@ def add_comment(
 
 @router.patch("/{post_id}/solution/{comment_id}", response_model=PostDetail)
 def mark_solution(
-    post_id: int,
-    comment_id: int,
+    post_id: uuid.UUID,
+    comment_id: uuid.UUID,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -252,7 +253,7 @@ def mark_solution(
         event_id=f"{EVENT_SOLUTION_MARKED}:{post_id}:{comment_id}",
         user_id=comment.author_id,
         event_type=EVENT_SOLUTION_MARKED,
-        payload={"post_id": post_id, "comment_id": comment_id, "marked_by": current_user.id},
+        payload={"post_id": str(post_id), "comment_id": str(comment_id), "marked_by": str(current_user.id)},
     )
 
     db.refresh(post)

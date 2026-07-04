@@ -14,6 +14,7 @@ Idempotency has two layers:
 The database constraint — not the Python check — is the real guarantee.
 """
 
+import uuid
 from typing import Any
 
 from sqlalchemy import select
@@ -33,7 +34,7 @@ def record_event(
     db: Session,
     *,
     event_id: str,
-    user_id: int,
+    user_id: uuid.UUID,
     event_type: str,
     payload: dict[str, Any] | None = None,
 ) -> tuple[Event, bool]:

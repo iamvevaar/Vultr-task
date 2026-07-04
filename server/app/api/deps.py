@@ -9,6 +9,8 @@ Any route that adds `user = Depends(get_current_user)` is now protected. Any
 route that adds `admin = Depends(require_admin)` is admin-only.
 """
 
+import uuid
+
 import jwt
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -23,6 +25,16 @@ from app.models.user import User, UserRole
 # means it returns None instead of raising when the header is missing, so WE
 # control the error shape (our envelope) instead of FastAPI's default.
 bearer_scheme = HTTPBearer(auto_error=False)
+
+
+def _load_user(db: Session, subject: str | None) -> User | None:
+    """Resolve the JWT `sub` (a UUID string) to a User, safely."""
+    if not subject:
+        return None
+    try:
+        return db.get(User, uuid.UUID(subject))
+    except (ValueError, TypeError):
+        return None
 
 
 def get_current_user(
@@ -42,8 +54,7 @@ def get_current_user(
         # Covers invalid signature, malformed token, AND expiry.
         raise unauthorized("Invalid or expired token")
 
-    user_id = payload.get("sub")
-    user = db.get(User, int(user_id)) if user_id is not None else None
+    user = _load_user(db, payload.get("sub"))
     if user is None:
         # Token was valid but the user was deleted since it was issued.
         raise unauthorized("User no longer exists")
@@ -68,8 +79,7 @@ def get_optional_user(
         payload = decode_token(token)
     except jwt.PyJWTError:
         return None
-    user_id = payload.get("sub")
-    return db.get(User, int(user_id)) if user_id is not None else None
+    return _load_user(db, payload.get("sub"))
 
 
 def require_admin(current_user: User = Depends(get_current_user)) -> User:

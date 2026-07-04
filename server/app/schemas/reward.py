@@ -1,5 +1,6 @@
 """Schemas for the user-facing reward ledger."""
 
+import uuid
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -9,12 +10,12 @@ from app.schemas.common import PageMeta
 
 
 class RewardOut(BaseModel):
-    id: int
+    id: uuid.UUID
     reward_type: RewardType
     amount: int
     badge_code: str | None
     label: str | None
-    source_challenge_id: int
+    source_challenge_id: uuid.UUID
     challenge_name: str | None   # joined in for display
     created_at: datetime
 

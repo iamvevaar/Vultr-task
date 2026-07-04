@@ -9,6 +9,8 @@ Admin challenge management (mounted under /api):
 Every route depends on require_admin, so a non-admin gets a 403.
 """
 
+import uuid
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -70,7 +72,7 @@ def list_challenges(
 
 @router.patch("/{challenge_id}", response_model=ChallengeOut)
 def update_challenge(
-    challenge_id: int,
+    challenge_id: uuid.UUID,
     body: ChallengeUpdate,
     admin: User = Depends(require_admin),
     db: Session = Depends(get_db),
@@ -111,7 +113,7 @@ def update_challenge(
 
 @router.delete("/{challenge_id}", response_model=ChallengeOut)
 def archive_challenge(
-    challenge_id: int,
+    challenge_id: uuid.UUID,
     admin: User = Depends(require_admin),
     db: Session = Depends(get_db),
 ):

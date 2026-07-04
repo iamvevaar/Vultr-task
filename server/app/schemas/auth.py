@@ -7,6 +7,7 @@ Schemas are the API's contract + input validation ("Validate all inputs"):
     hash).
 """
 
+import uuid
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
@@ -30,7 +31,7 @@ class LoginRequest(BaseModel):
 
 class UserOut(BaseModel):
     """What we expose about a user. Note: no password_hash here, ever."""
-    id: int
+    id: uuid.UUID
     email: EmailStr
     username: str
     role: UserRole
