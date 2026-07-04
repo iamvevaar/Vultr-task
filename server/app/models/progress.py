@@ -8,9 +8,10 @@ user has exactly one progress row per challenge.
 """
 
 import enum
+import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Integer, UniqueConstraint, func
+from sqlalchemy import DateTime, Enum, ForeignKey, Integer, UniqueConstraint, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -27,9 +28,9 @@ class ChallengeProgress(Base):
         UniqueConstraint("challenge_id", "user_id", name="uq_progress_challenge_user"),
     )
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    challenge_id: Mapped[int] = mapped_column(ForeignKey("challenges.id"), index=True, nullable=False)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    challenge_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("challenges.id"), index=True, nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
 
     # The evaluator's latest number: count so far, or current streak length.
     current_value: Mapped[int] = mapped_column(Integer, default=0, nullable=False)

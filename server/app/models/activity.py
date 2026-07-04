@@ -10,9 +10,10 @@ This table powers two things:
   - the streak heatmap on the frontend (a value per day)
 """
 
+import uuid
 from datetime import date, datetime
 
-from sqlalchemy import Date, DateTime, ForeignKey, String, UniqueConstraint, func
+from sqlalchemy import Date, DateTime, ForeignKey, String, UniqueConstraint, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -24,8 +25,8 @@ class UserDailyActivity(Base):
         UniqueConstraint("user_id", "event_type", "activity_date", name="uq_activity_user_type_date"),
     )
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
     event_type: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
     activity_date: Mapped[date] = mapped_column(Date, index=True, nullable=False)
 

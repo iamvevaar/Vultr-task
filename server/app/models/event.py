@@ -13,10 +13,11 @@ Two columns carry the idempotency + async design:
 """
 
 import enum
+import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import DateTime, Enum, ForeignKey, String, func
+from sqlalchemy import DateTime, Enum, ForeignKey, String, Uuid, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -32,14 +33,14 @@ class EventStatus(str, enum.Enum):
 class Event(Base):
     __tablename__ = "events"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
 
     # The client-generated idempotency key. UNIQUE = the database itself refuses
     # a second row with the same event_id, no matter how many requests race.
     event_id: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
 
     # Who the event belongs to (taken from the auth token, never the client body).
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
 
     # Free-form type string (e.g. "post_created"). The engine stays generic — it
     # does NOT hardcode forum event names; challenges reference types by string.
