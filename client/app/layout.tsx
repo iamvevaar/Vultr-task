@@ -1,16 +1,27 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Body: Geist — clean, neutral, highly readable.
+const sans = Geist({
+  variable: "--ff-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Utility / data / code: Geist Mono — powers tags, timestamps, and the
+// tabular-numeral points & streak values that are our signature detail.
+const mono = Geist_Mono({
+  variable: "--ff-mono",
   subsets: ["latin"],
+});
+
+// Display / headings: Space Grotesk — geometric, engineered feel; reads
+// "technical" without shouting. Used with restraint on headings only.
+const display = Space_Grotesk({
+  variable: "--ff-display",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +37,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      // `dark` forces our dark-only palette; the font variables expose the faces.
+      className={`dark ${sans.variable} ${mono.variable} ${display.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>
