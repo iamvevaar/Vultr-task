@@ -1,0 +1,41 @@
+# Docker Compose orchestrates multiple containers as one app.
+# For P0 we run just two: the Postgres database and the FastAPI API.
+# We'll add the `worker` (P5) and `frontend` (P9) to this same file later.
+
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL database
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:16              # official Postgres image, version pinned
+    environment:
+      POSTGRES_USER: vultr
+      POSTGRES_PASSWORD: vultr
+      POSTGRES_DB: challenge_engine
+    ports:
+      - "5432:5432"                 # expose to your Mac so you can inspect it with a GUI
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # persist data across restarts
+    healthcheck:                    # lets the API wait until the DB is actually ready
+      test: ["CMD-SHELL", "pg_isready -U vultr -d challenge_engine"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # FastAPI application (the API process)
+  # ---------------------------------------------------------------------------
+  api:
+    build: ./server                 # build from server/Dockerfile
+    env_file:
+      - ./server/.env               # load our settings (you create this from .env.example)
+    ports:
+      - "8000:8000"                 # http://localhost:8000
+    volumes:
+      - ./server:/app               # mount code in for live reload during development
+    depends_on:
+      db:
+        condition: service_healthy  # don't start the API until the DB is ready
+
+volumes:
+  pgdata:                           # named volume where Postgres stores its files

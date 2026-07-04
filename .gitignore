@@ -1,0 +1,20 @@
+# Secrets — never commit real env files (we DO commit .env.example)
+.env
+**/.env
+!**/.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

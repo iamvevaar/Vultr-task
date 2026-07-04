@@ -1,0 +1,16 @@
+# --- Web framework ---
+fastapi==0.115.6            # the API framework (required by the task)
+uvicorn[standard]==0.34.0   # the ASGI server that actually runs FastAPI
+
+# --- Database ---
+sqlalchemy==2.0.36          # ORM: Python classes <-> Postgres tables
+psycopg2-binary==2.9.10     # the driver SQLAlchemy uses to talk to Postgres
+alembic==1.14.0             # database migrations (versioned schema changes)
+
+# --- Config & validation ---
+pydantic==2.10.4            # request/response validation (ships with FastAPI)
+pydantic-settings==2.7.0    # loads settings from environment variables / .env
+
+# --- Auth ---
+pyjwt==2.10.1               # create & verify JWT access tokens
+bcrypt==4.2.1               # hash passwords (never store them in plaintext)
