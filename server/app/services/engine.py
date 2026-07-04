@@ -24,6 +24,7 @@ from app.models.challenge import Challenge, ChallengeStatus
 from app.models.event import Event
 from app.models.progress import ChallengeProgress, ProgressState
 from app.services.evaluators import EVALUATORS
+from app.services.reward_service import disburse_reward
 
 
 def _record_daily_activity(db: Session, user_id: int, event_type: str, activity_date) -> None:
@@ -59,8 +60,8 @@ def _upsert_progress(db: Session, challenge: Challenge, user_id: int, result, no
     if result.completed and progress.state != ProgressState.completed:
         progress.state = ProgressState.completed
         progress.completed_at = now
-        # --- P6 REWARD HOOK ---
-        # disburse_reward(db, challenge, user_id) will go here, idempotently.
+        # Grant the reward — idempotent, so this is safe even on a re-completion race.
+        disburse_reward(db, challenge, user_id, now)
 
 
 def process_event(db: Session, event: Event, now: datetime | None = None) -> None:

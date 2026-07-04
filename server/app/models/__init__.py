@@ -14,6 +14,7 @@ from app.models.challenge import Challenge, ChallengeCadence, ChallengeStatus, C
 from app.models.event import Event, EventStatus
 from app.models.post import Comment, Post
 from app.models.progress import ChallengeProgress, ProgressState
+from app.models.reward import RewardLedger, RewardType, UserPoints
 from app.models.user import User, UserRole
 
 __all__ = [
@@ -31,4 +32,7 @@ __all__ = [
     "ChallengeProgress",
     "ProgressState",
     "UserDailyActivity",
+    "RewardLedger",
+    "RewardType",
+    "UserPoints",
 ]
