@@ -19,7 +19,7 @@ import { postQueryKey } from "@/hooks/use-post";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 /** Immutably insert a comment into the tree — as a root, or under a parent. */
-function insertComment(post: PostDetail, comment: CommentNode, parentId: number | null): PostDetail {
+function insertComment(post: PostDetail, comment: CommentNode, parentId: string | null): PostDetail {
   if (parentId === null) {
     return { ...post, comment_count: post.comment_count + 1, comments: [...post.comments, comment] };
   }
@@ -32,9 +32,9 @@ function insertComment(post: PostDetail, comment: CommentNode, parentId: number 
   return { ...post, comment_count: post.comment_count + 1, comments: addToChildren(post.comments) };
 }
 
-type AddVars = { body: string; parentId?: number | null };
+type AddVars = { body: string; parentId?: string | null };
 
-export function useAddComment(postId: number) {
+export function useAddComment(postId: string) {
   const queryClient = useQueryClient();
   const { data: user } = useCurrentUser();
   const key = postQueryKey(postId);
@@ -52,7 +52,7 @@ export function useAddComment(postId: number) {
 
       if (previous && user) {
         const optimistic: CommentNode = {
-          id: -Date.now(), // temporary negative id, replaced on refetch
+          id: `temp-${crypto.randomUUID()}`, // temporary id, replaced on refetch
           body,
           author: { id: user.id, username: user.username },
           parent_comment_id: parentId ?? null,
@@ -74,10 +74,10 @@ export function useAddComment(postId: number) {
   });
 }
 
-export function useMarkSolution(postId: number) {
+export function useMarkSolution(postId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (commentId: number) =>
+    mutationFn: (commentId: string) =>
       apiFetch<PostDetail>(`/posts/${postId}/solution/${commentId}`, { method: "PATCH" }),
     onSuccess: (updated) => queryClient.setQueryData(postQueryKey(postId), updated),
     onError: () => toast.error("Couldn't mark the solution."),

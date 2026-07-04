@@ -3,7 +3,7 @@
 export type Role = "user" | "admin";
 
 export type User = {
-  id: number;
+  id: string;
   email: string;
   username: string;
   role: Role;
@@ -18,10 +18,10 @@ export type AuthResponse = {
 
 // --- Forum ---
 
-export type Author = { id: number; username: string };
+export type Author = { id: string; username: string };
 
 export type PostSummary = {
-  id: number;
+  id: string;
   title: string;
   body: string;
   author: Author;
@@ -36,24 +36,24 @@ export type Paginated<T> = { data: T[]; meta: PageMeta };
 
 // A comment plus its nested replies (the backend returns a tree).
 export type CommentNode = {
-  id: number;
+  id: string;
   body: string;
   author: Author;
-  parent_comment_id: number | null;
+  parent_comment_id: string | null;
   is_solution: boolean;
   created_at: string;
   replies: CommentNode[];
 };
 
 export type PostDetail = {
-  id: number;
+  id: string;
   title: string;
   body: string;
   author: Author;
   view_count: number;
   comment_count: number;
   created_at: string;
-  solution_comment_id: number | null;
+  solution_comment_id: string | null;
   comments: CommentNode[];
 };
 
@@ -72,7 +72,7 @@ export type ProgressInfo = {
 };
 
 export type ChallengeWithProgress = {
-  id: number;
+  id: string;
   name: string;
   description: string;
   type: "count" | "streak";
@@ -100,12 +100,12 @@ export type StreaksResponse = { streaks: StreakOut[]; activity: ActivityDay[] };
 // --- Rewards / profile ---
 
 export type RewardEntry = {
-  id: number;
+  id: string;
   reward_type: "points" | "badge";
   amount: number;
   badge_code: string | null;
   label: string | null;
-  source_challenge_id: number;
+  source_challenge_id: string;
   challenge_name: string | null;
   created_at: string;
 };
@@ -123,7 +123,7 @@ export type RewardsPage = {
 
 export type LeaderboardEntry = {
   rank: number;
-  user_id: number;
+  user_id: string;
   username: string;
   total_points: number;
 };

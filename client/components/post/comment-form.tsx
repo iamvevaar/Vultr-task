@@ -12,8 +12,8 @@ export function CommentForm({
   placeholder = "Write a comment…",
   autoFocus = false,
 }: {
-  postId: number;
-  parentId?: number | null;
+  postId: string;
+  parentId?: string | null;
   onDone?: () => void;
   placeholder?: string;
   autoFocus?: boolean;

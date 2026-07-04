@@ -5,12 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
 import type { PostDetail } from "@/lib/types";
 
-export const postQueryKey = (id: number) => ["post", id] as const;
+export const postQueryKey = (id: string) => ["post", id] as const;
 
-export function usePost(id: number) {
+export function usePost(id: string) {
   return useQuery({
     queryKey: postQueryKey(id),
     queryFn: () => apiFetch<PostDetail>(`/posts/${id}`),
-    enabled: Number.isFinite(id) && id > 0,
+    enabled: !!id,
   });
 }

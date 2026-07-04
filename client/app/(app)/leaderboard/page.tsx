@@ -38,7 +38,7 @@ export default function LeaderboardPage() {
   return <LeaderboardContent meId={user.id} />;
 }
 
-function LeaderboardContent({ meId }: { meId: number }) {
+function LeaderboardContent({ meId }: { meId: string }) {
   const [page, setPage] = useState(1);
   const lb = useLeaderboard(page);
 

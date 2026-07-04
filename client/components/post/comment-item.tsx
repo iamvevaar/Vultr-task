@@ -18,14 +18,14 @@ export function CommentItem({
   marking,
 }: {
   comment: CommentNode;
-  postId: number;
+  postId: string;
   isOwner: boolean;
   canReply: boolean;
-  onMarkSolution: (commentId: number) => void;
+  onMarkSolution: (commentId: string) => void;
   marking: boolean;
 }) {
   const [replying, setReplying] = useState(false);
-  const isOptimistic = comment.id < 0; // temp id → hide actions until reconciled
+  const isOptimistic = comment.id.startsWith("temp-"); // temp id → hide actions until reconciled
 
   return (
     <div>

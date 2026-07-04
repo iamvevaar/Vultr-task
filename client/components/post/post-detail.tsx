@@ -23,7 +23,7 @@ function findSolution(nodes: CommentNode[]): CommentNode | null {
   return null;
 }
 
-export function PostDetail({ postId }: { postId: number }) {
+export function PostDetail({ postId }: { postId: string }) {
   const { data: post, isLoading, isError, refetch } = usePost(postId);
   const { data: user } = useCurrentUser();
   const markSolution = useMarkSolution(postId);

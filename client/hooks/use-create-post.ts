@@ -30,7 +30,7 @@ export function useCreatePost() {
 
       if (previous && user) {
         const optimistic: PostSummary = {
-          id: -Date.now(),
+          id: `temp-${crypto.randomUUID()}`,
           title: vars.title,
           body: vars.body,
           author: { id: user.id, username: user.username },

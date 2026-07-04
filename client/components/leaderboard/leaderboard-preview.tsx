@@ -37,7 +37,7 @@ export function LeaderboardPreview() {
   return <PreviewList meId={user.id} />;
 }
 
-function PreviewList({ meId }: { meId: number }) {
+function PreviewList({ meId }: { meId: string }) {
   const lb = useLeaderboard(1, 3);
 
   if (lb.isLoading) {
