@@ -10,6 +10,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 
+import { AuthModalProvider } from "@/components/auth/auth-modal";
+
 export function Providers({ children }: { children: React.ReactNode }) {
   // useState(() => ...) creates the client once per browser session (not on
   // every render), which is the recommended pattern in the App Router.
@@ -26,5 +28,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       })
   );
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthModalProvider>{children}</AuthModalProvider>
+    </QueryClientProvider>
+  );
 }
