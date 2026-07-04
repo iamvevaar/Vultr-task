@@ -1,32 +1,32 @@
 """
 Application entrypoint.
 
-This creates the FastAPI app object that uvicorn runs (see the Dockerfile CMD:
-`uvicorn app.main:app`). For P0 it only exposes a health check so we can prove
-the API is up AND can reach Postgres. Real routers get mounted here as we build
-each phase.
+Creates the FastAPI app that uvicorn runs (see Dockerfile CMD:
+`uvicorn app.main:app`). Here we:
+  1. install the global error handlers (consistent error envelope), and
+  2. mount each feature router under the /api base path.
 """
 
 from fastapi import Depends, FastAPI
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.api.routes import auth
 from app.core.database import get_db
+from app.core.errors import install_error_handlers
 
-# The task specifies every route lives under /api. Setting a root_path-style
-# prefix on each router (later) keeps that consistent. For now, the health route
-# is explicit.
 app = FastAPI(title="Challenge & Rewards Engine")
+
+# All errors now return the { "error": { code, message, details } } envelope.
+install_error_handlers(app)
+
+# The task mandates a /api base path. Every router is mounted under it, so
+# auth.router's own "/auth" prefix yields final paths like /api/auth/register.
+app.include_router(auth.router, prefix="/api")
 
 
 @app.get("/api/health")
 def health(db: Session = Depends(get_db)):
-    """
-    Liveness + DB connectivity check.
-
-    - If the API process is running, this handler executes at all.
-    - We run a trivial `SELECT 1` to confirm the database is actually reachable,
-      not just that the web server booted. Returns the two facts separately.
-    """
+    """Liveness + DB connectivity check."""
     db.execute(text("SELECT 1"))  # raises if the DB is unreachable
     return {"status": "ok", "database": "connected"}

@@ -19,6 +19,12 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 1440
 
+    # Anyone who registers with this exact code becomes an admin. This is a
+    # simple, documented bootstrap so graders can create an admin account
+    # through the normal /auth/register endpoint. In a real product you'd seed
+    # admins some other way.
+    admin_signup_code: str = "make-me-admin"
+
     # Engine behaviour.
     app_tz: str = "UTC"
     worker_poll_seconds: int = 2

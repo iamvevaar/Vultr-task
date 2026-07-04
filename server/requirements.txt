@@ -14,3 +14,4 @@ pydantic-settings==2.7.0    # loads settings from environment variables / .env
 # --- Auth ---
 pyjwt==2.10.1               # create & verify JWT access tokens
 bcrypt==4.2.1               # hash passwords (never store them in plaintext)
+email-validator==2.2.0      # lets Pydantic's EmailStr validate email addresses
