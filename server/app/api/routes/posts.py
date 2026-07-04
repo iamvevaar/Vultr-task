@@ -19,7 +19,7 @@ from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_current_user, get_optional_user
 from app.core.config import settings
 from app.core.database import get_db
 from app.core.errors import bad_request, forbidden, not_found
@@ -95,9 +95,9 @@ def list_posts(
     sort: Literal["latest", "trending"] = "latest",
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
-    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    # Public: guests can browse the feed. (Deliberate deviation, see PLAN.)
     total = db.scalar(select(func.count()).select_from(Post)) or 0
 
     if sort == "trending":
@@ -145,27 +145,29 @@ def create_post(
 @router.get("/{post_id}", response_model=PostDetail)
 def get_post(
     post_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User | None = Depends(get_optional_user),  # public: guests allowed
     db: Session = Depends(get_db),
 ):
     post = db.get(Post, post_id)
     if post is None:
         raise not_found("Post not found")
 
-    # A view is counted at most once per user per day (in APP_TZ). The event_id
-    # encodes that rule, so repeated refreshes don't inflate view challenges.
-    today = datetime.now(ZoneInfo(settings.app_tz)).date().isoformat()
-    _, created = record_event(
-        db,
-        event_id=f"{EVENT_POST_VIEWED}:{current_user.id}:{post.id}:{today}",
-        user_id=current_user.id,
-        event_type=EVENT_POST_VIEWED,
-        payload={"post_id": post.id},
-    )
-    if created:  # only bump the counter on a genuinely new daily view
-        post.view_count += 1
-        db.commit()
-        db.refresh(post)
+    # Only logged-in users generate a view event. A view is counted at most once
+    # per user per day (in APP_TZ); the event_id encodes that rule so refreshes
+    # don't inflate view challenges. Guests just read — no event, no counter bump.
+    if current_user is not None:
+        today = datetime.now(ZoneInfo(settings.app_tz)).date().isoformat()
+        _, created = record_event(
+            db,
+            event_id=f"{EVENT_POST_VIEWED}:{current_user.id}:{post.id}:{today}",
+            user_id=current_user.id,
+            event_type=EVENT_POST_VIEWED,
+            payload={"post_id": post.id},
+        )
+        if created:
+            post.view_count += 1
+            db.commit()
+            db.refresh(post)
 
     return _post_detail(post)
 

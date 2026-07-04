@@ -51,6 +51,27 @@ def get_current_user(
     return user
 
 
+def get_optional_user(
+    request: Request,
+    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
+    db: Session = Depends(get_db),
+) -> User | None:
+    """
+    Like get_current_user, but returns None instead of 401 when there's no valid
+    token. Used on publicly-readable endpoints (the feed) so guests can browse,
+    while logged-in users still get personalized behaviour.
+    """
+    token = credentials.credentials if credentials else request.cookies.get(AUTH_COOKIE_NAME)
+    if not token:
+        return None
+    try:
+        payload = decode_token(token)
+    except jwt.PyJWTError:
+        return None
+    user_id = payload.get("sub")
+    return db.get(User, int(user_id)) if user_id is not None else None
+
+
 def require_admin(current_user: User = Depends(get_current_user)) -> User:
     """
     Depends on get_current_user first (so you must be logged in), then checks
