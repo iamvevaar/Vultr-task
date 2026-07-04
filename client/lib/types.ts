@@ -33,3 +33,26 @@ export type PostSummary = {
 export type PageMeta = { page: number; limit: number; total: number; pages: number };
 
 export type Paginated<T> = { data: T[]; meta: PageMeta };
+
+// A comment plus its nested replies (the backend returns a tree).
+export type CommentNode = {
+  id: number;
+  body: string;
+  author: Author;
+  parent_comment_id: number | null;
+  is_solution: boolean;
+  created_at: string;
+  replies: CommentNode[];
+};
+
+export type PostDetail = {
+  id: number;
+  title: string;
+  body: string;
+  author: Author;
+  view_count: number;
+  comment_count: number;
+  created_at: string;
+  solution_comment_id: number | null;
+  comments: CommentNode[];
+};

@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { AuthModalProvider } from "@/components/auth/auth-modal";
+import { Toaster } from "@/components/ui/sonner";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   // useState(() => ...) creates the client once per browser session (not on
@@ -31,6 +32,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthModalProvider>{children}</AuthModalProvider>
+      <Toaster position="bottom-right" richColors />
     </QueryClientProvider>
   );
 }
