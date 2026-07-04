@@ -37,5 +37,20 @@ services:
       db:
         condition: service_healthy  # don't start the API until the DB is ready
 
+  # ---------------------------------------------------------------------------
+  # Background worker (the challenge engine) — same image as the API, but its
+  # command runs the polling loop instead of the web server.
+  # ---------------------------------------------------------------------------
+  worker:
+    build: ./server
+    command: python -m app.worker.worker   # overrides the Dockerfile's uvicorn CMD
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server:/app                       # live code for development
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   pgdata:                           # named volume where Postgres stores its files

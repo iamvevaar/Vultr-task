@@ -9,9 +9,11 @@ Importing every model here does two jobs:
 """
 
 from app.core.database import Base
+from app.models.activity import UserDailyActivity
 from app.models.challenge import Challenge, ChallengeCadence, ChallengeStatus, ChallengeType
 from app.models.event import Event, EventStatus
 from app.models.post import Comment, Post
+from app.models.progress import ChallengeProgress, ProgressState
 from app.models.user import User, UserRole
 
 __all__ = [
@@ -26,4 +28,7 @@ __all__ = [
     "ChallengeType",
     "ChallengeStatus",
     "ChallengeCadence",
+    "ChallengeProgress",
+    "ProgressState",
+    "UserDailyActivity",
 ]
