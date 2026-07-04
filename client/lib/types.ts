@@ -56,3 +56,43 @@ export type PostDetail = {
   solution_comment_id: number | null;
   comments: CommentNode[];
 };
+
+// --- Challenges, progress, streaks ---
+
+export type Reward =
+  | { type: "points"; amount: number }
+  | { type: "badge"; code: string; label?: string };
+
+export type ProgressInfo = {
+  current_value: number;
+  target: number;
+  percent: number;
+  state: "in_progress" | "completed";
+  completed_at: string | null;
+};
+
+export type ChallengeWithProgress = {
+  id: number;
+  name: string;
+  description: string;
+  type: "count" | "streak";
+  event_type: string;
+  rule_config: Record<string, unknown>;
+  reward: Reward;
+  start_at: string;
+  end_at: string;
+  cadence: "one_off" | "weekly";
+  status: string;
+  progress: ProgressInfo;
+};
+
+export type StreakOut = {
+  event_type: string;
+  current_streak: number;
+  longest_streak: number;
+  last_active_date: string;
+};
+
+export type ActivityDay = { date: string; event_type: string };
+
+export type StreaksResponse = { streaks: StreakOut[]; activity: ActivityDay[] };
