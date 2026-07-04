@@ -8,6 +8,7 @@ Creates the FastAPI app that uvicorn runs (see Dockerfile CMD:
 """
 
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -20,10 +21,20 @@ from app.api.routes import (
     posts,
     users,
 )
+from app.core.config import settings
 from app.core.database import get_db
 from app.core.errors import install_error_handlers
 
 app = FastAPI(title="Challenge & Rewards Engine")
+
+# Allow the browser frontend (a different origin) to call this API.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[o.strip() for o in settings.cors_origins.split(",") if o.strip()],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # All errors now return the { "error": { code, message, details } } envelope.
 install_error_handlers(app)

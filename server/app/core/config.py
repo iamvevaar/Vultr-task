@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     app_tz: str = "UTC"
     worker_poll_seconds: int = 2
 
+    # Which browser origins may call the API (comma-separated). The Next.js dev
+    # server runs on :3000, a different origin from the API on :8000, so it must
+    # be allowlisted or the browser blocks the requests (CORS).
+    cors_origins: str = "http://localhost:3000"
+
     # Tell pydantic-settings to also read from a local .env file if present.
     # (Inside Docker the values come from env_file; this helps if you ever run
     # the app outside Docker.)
