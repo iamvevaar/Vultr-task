@@ -18,8 +18,8 @@ import { apiFetch } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { ME_QUERY_KEY, useCurrentUser } from "@/hooks/use-current-user";
 import { useAuthModal } from "@/components/auth/auth-modal";
+import { WeeklyWidget } from "@/components/challenges/weekly-widget";
 import { Button, buttonVariants } from "@/components/ui/button";
-import type { User as UserType } from "@/lib/types";
 
 const NAV = [
   { label: "Feed", href: "/", icon: Home, requiresAuth: false },
@@ -119,35 +119,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* ---- Right rail (Layer 1) — fixed full height ---- */}
       <aside className="m-4 hidden h-[calc(100vh-2rem)] w-72 shrink-0 flex-col gap-4 overflow-y-auto rounded-lg border border-border bg-surface-1 p-4 lg:flex">
-        <RightRail user={user ?? null} openLogin={() => authModal.open("login")} />
+        {/* Weekly widget is here in the shared layout → present on every page, polling live. */}
+        <WeeklyWidget />
+
+        <div className="rounded-xl border border-border bg-surface-2 p-4">
+          <p className="text-xs font-medium uppercase tracking-widest text-subtle">Top This Week</p>
+          <p className="mt-2 text-sm text-muted-foreground">Leaderboard preview coming soon.</p>
+        </div>
       </aside>
     </div>
-  );
-}
-
-function RightRail({ user, openLogin }: { user: UserType | null; openLogin: () => void }) {
-  return (
-    <>
-      <div className="rounded-xl border border-border bg-surface-2 p-4">
-        <p className="text-xs font-medium uppercase tracking-widest text-subtle">Weekly Challenge</p>
-        {user ? (
-          <p className="mt-2 text-sm text-muted-foreground">Live progress lands here soon.</p>
-        ) : (
-          <>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Sign in to join this week&apos;s challenge and start earning points.
-            </p>
-            <Button size="sm" className="mt-3 w-full" onClick={openLogin}>
-              Sign in
-            </Button>
-          </>
-        )}
-      </div>
-
-      <div className="rounded-xl border border-border bg-surface-2 p-4">
-        <p className="text-xs font-medium uppercase tracking-widest text-subtle">Top This Week</p>
-        <p className="mt-2 text-sm text-muted-foreground">Leaderboard preview coming soon.</p>
-      </div>
-    </>
   );
 }
