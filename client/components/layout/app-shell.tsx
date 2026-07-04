@@ -20,6 +20,7 @@ import { ME_QUERY_KEY, useCurrentUser } from "@/hooks/use-current-user";
 import { useAuthModal } from "@/components/auth/auth-modal";
 import { WeeklyWidget } from "@/components/challenges/weekly-widget";
 import { LeaderboardPreview } from "@/components/leaderboard/leaderboard-preview";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { Button, buttonVariants } from "@/components/ui/button";
 
 const NAV = [
@@ -116,13 +117,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* ---- Main (Layer 0 canvas) — the ONLY scrolling area ---- */}
-      <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8">{children}</main>
+      <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8">
+        <ErrorBoundary label="this page">{children}</ErrorBoundary>
+      </main>
 
       {/* ---- Right rail (Layer 1) — fixed full height ---- */}
       <aside className="m-4 hidden h-[calc(100vh-2rem)] w-72 shrink-0 flex-col gap-4 overflow-y-auto rounded-lg border border-border bg-surface-1 p-4 lg:flex">
         {/* Weekly widget is here in the shared layout → present on every page, polling live. */}
-        <WeeklyWidget />
-        <LeaderboardPreview />
+        <ErrorBoundary label="the weekly challenge">
+          <WeeklyWidget />
+        </ErrorBoundary>
+        <ErrorBoundary label="the leaderboard">
+          <LeaderboardPreview />
+        </ErrorBoundary>
       </aside>
     </div>
   );
