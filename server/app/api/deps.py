@@ -10,13 +10,13 @@ route that adds `admin = Depends(require_admin)` is admin-only.
 """
 
 import jwt
-from fastapi import Depends
+from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.errors import forbidden, unauthorized
-from app.core.security import decode_token
+from app.core.security import AUTH_COOKIE_NAME, decode_token
 from app.models.user import User, UserRole
 
 # HTTPBearer reads the "Authorization: Bearer <token>" header. auto_error=False
@@ -26,14 +26,18 @@ bearer_scheme = HTTPBearer(auto_error=False)
 
 
 def get_current_user(
+    request: Request,
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ) -> User:
-    if credentials is None:
+    # Prefer the Authorization header (Swagger/tests); fall back to the httpOnly
+    # cookie (the browser frontend). Either proves who you are.
+    token = credentials.credentials if credentials else request.cookies.get(AUTH_COOKIE_NAME)
+    if not token:
         raise unauthorized("Authentication required")
 
     try:
-        payload = decode_token(credentials.credentials)
+        payload = decode_token(token)
     except jwt.PyJWTError:
         # Covers invalid signature, malformed token, AND expiry.
         raise unauthorized("Invalid or expired token")

@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     # admins some other way.
     admin_signup_code: str = "make-me-admin"
 
+    # The JWT is delivered to the browser as an httpOnly cookie. Secure=True
+    # forces HTTPS-only; keep False for local http, set True in production.
+    cookie_secure: bool = False
+
     # Engine behaviour.
     app_tz: str = "UTC"
     worker_poll_seconds: int = 2

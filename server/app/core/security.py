@@ -10,8 +10,12 @@ from datetime import datetime, timedelta, timezone
 
 import bcrypt
 import jwt
+from fastapi import Response
 
 from app.core.config import settings
+
+# Name of the httpOnly cookie that carries the JWT to the browser.
+AUTH_COOKIE_NAME = "access_token"
 
 
 # --- Passwords ---------------------------------------------------------------
@@ -62,3 +66,27 @@ def decode_token(token: str) -> dict:
     the caller turns that into a 401.
     """
     return jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
+
+
+# --- Auth cookie -------------------------------------------------------------
+
+def set_auth_cookie(response: Response, token: str) -> None:
+    """
+    Attach the JWT as an httpOnly cookie. httponly=True keeps it out of reach of
+    JavaScript (XSS can't read it); samesite="lax" blocks it from being sent on
+    cross-site requests (CSRF protection); secure=True (prod) restricts it to HTTPS.
+    """
+    response.set_cookie(
+        key=AUTH_COOKIE_NAME,
+        value=token,
+        httponly=True,
+        secure=settings.cookie_secure,
+        samesite="lax",
+        max_age=settings.access_token_expire_minutes * 60,
+        path="/",
+    )
+
+
+def clear_auth_cookie(response: Response) -> None:
+    """Remove the auth cookie (logout)."""
+    response.delete_cookie(key=AUTH_COOKIE_NAME, path="/")
