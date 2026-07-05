@@ -280,7 +280,99 @@ curl -s -X POST http://localhost:8000/api/events -H "Authorization: Bearer $USER
 
 ### DB schema rationale
 
-9 tables (see `server/app/models`):
+The 9 tables and their relationships (all primary keys are UUIDs):
+
+```mermaid
+erDiagram
+    users ||--o{ posts : "authors"
+    users ||--o{ comments : "authors"
+    posts ||--o{ comments : "has"
+    comments ||--o{ comments : "replies to"
+    users ||--o{ events : "emits"
+    users ||--o{ challenges : "creates"
+    users ||--o{ challenge_progress : "has"
+    challenges ||--o{ challenge_progress : "tracked by"
+    users ||--o{ user_daily_activity : "logs"
+    users ||--o{ reward_ledger : "earns"
+    challenges ||--o{ reward_ledger : "source of"
+    users ||--|| user_points : "balance"
+
+    users {
+        uuid id PK
+        string email UK
+        string username UK
+        enum role "user | admin"
+        timestamptz created_at
+    }
+    posts {
+        uuid id PK
+        uuid author_id FK
+        string title
+        text body
+        int view_count
+        int comment_count
+    }
+    comments {
+        uuid id PK
+        uuid post_id FK
+        uuid author_id FK
+        uuid parent_comment_id FK "nullable, self-ref"
+        bool is_solution
+    }
+    events {
+        uuid id PK
+        string event_id UK "client idempotency key"
+        uuid user_id FK
+        string event_type
+        jsonb payload
+        enum status "pending|processed|failed"
+        jsonb response_snapshot
+    }
+    challenges {
+        uuid id PK
+        string name
+        enum type "count | streak"
+        jsonb rule_config
+        string event_type
+        jsonb reward
+        enum cadence "one_off | weekly"
+        enum status "draft|active|expired|archived"
+        uuid created_by FK
+    }
+    challenge_progress {
+        uuid id PK
+        uuid challenge_id FK
+        uuid user_id FK
+        int current_value
+        enum state "in_progress|completed"
+    }
+    user_daily_activity {
+        uuid id PK
+        uuid user_id FK
+        string event_type
+        date activity_date
+    }
+    reward_ledger {
+        uuid id PK
+        uuid user_id FK
+        uuid source_challenge_id FK
+        enum reward_type "points|badge"
+        int amount
+        string badge_code
+    }
+    user_points {
+        uuid user_id PK
+        int total_points
+    }
+```
+
+**Idempotency-critical unique constraints:**
+- `events.event_id` — event-replay dedup
+- `reward_ledger (user_id, source_challenge_id)` — a challenge rewards a user at most once
+- `challenge_progress (challenge_id, user_id)` — one progress row per user per challenge
+- `user_daily_activity (user_id, event_type, activity_date)` — activity is a per-day set
+
+Per-table rationale (see `server/app/models`):
 
 - `users` — identity + role.
 - `posts` **/** `comments` — forum content; comments self-reference via
