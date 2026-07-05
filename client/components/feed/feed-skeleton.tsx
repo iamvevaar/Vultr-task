@@ -3,7 +3,7 @@ export function FeedSkeleton() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="rounded-xl border border-border bg-surface-2 p-4">
+        <div key={i} className="rounded-xl bg-surface-2 p-4">
           <div className="flex gap-3">
             <div className="size-9 shrink-0 animate-pulse rounded-full bg-surface-3" />
             <div className="flex-1 space-y-2">

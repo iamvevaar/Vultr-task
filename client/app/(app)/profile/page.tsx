@@ -23,7 +23,7 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="mx-auto max-w-2xl rounded-xl border border-border bg-surface-2 p-8 text-center">
+      <div className="mx-auto max-w-2xl rounded-xl bg-surface-2 p-8 text-center">
         <p className="text-sm text-muted-foreground">Sign in to see your profile and rewards.</p>
         <Button className="mt-3" onClick={() => authModal.open("login")}>
           Sign in
@@ -47,7 +47,7 @@ function ProfileContent({ user }: { user: User }) {
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       {/* Header + points */}
-      <header className="flex items-center gap-4 rounded-xl border border-border bg-surface-2 p-5">
+      <header className="flex items-center gap-4 rounded-xl bg-surface-2 p-5">
         <div className="grid size-16 shrink-0 place-items-center rounded-full bg-surface-3 text-lg font-semibold">
           {user.username.slice(0, 2).toUpperCase()}
         </div>
@@ -93,19 +93,19 @@ function ProfileContent({ user }: { user: User }) {
         {rewards.isLoading ? (
           <LedgerSkeleton />
         ) : rewards.isError ? (
-          <div className="flex items-center justify-between rounded-xl border border-border bg-surface-2 p-4">
+          <div className="flex items-center justify-between rounded-xl bg-surface-2 p-4">
             <span className="text-sm text-muted-foreground">Couldn&apos;t load your rewards.</span>
             <Button variant="outline" size="sm" onClick={() => rewards.refetch()}>
               Retry
             </Button>
           </div>
         ) : !rewards.data || rewards.data.data.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border bg-surface-2/40 p-8 text-center text-sm text-muted-foreground">
+          <div className="rounded-xl bg-surface-2/40 p-8 text-center text-sm text-muted-foreground">
             No rewards yet. Complete a challenge to earn your first.
           </div>
         ) : (
           <>
-            <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface-2">
+            <ul className="divide-y divide-border overflow-hidden rounded-xl bg-surface-2">
               {rewards.data.data.map((r) => (
                 <RewardRow key={r.id} reward={r} />
               ))}
@@ -154,7 +154,7 @@ function RewardRow({ reward }: { reward: RewardEntry }) {
 
 function LedgerSkeleton() {
   return (
-    <div className="space-y-px overflow-hidden rounded-xl border border-border bg-surface-2">
+    <div className="space-y-px overflow-hidden rounded-xl bg-surface-2">
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="h-12 animate-pulse bg-surface-3/40" />
       ))}

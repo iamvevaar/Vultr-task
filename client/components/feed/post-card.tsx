@@ -8,7 +8,7 @@ export function PostCard({ post }: { post: PostSummary }) {
   return (
     <Link
       href={`/posts/${post.id}`}
-      className="block rounded-xl border border-border bg-surface-2 p-4 transition-colors hover:border-foreground/15 hover:bg-surface-3/40"
+      className="block rounded-xl bg-surface-2 p-4 transition-colors hover:bg-surface-3/60"
     >
       <div className="flex items-start gap-3">
         <div className="grid size-9 shrink-0 place-items-center rounded-full bg-surface-3 text-xs font-medium">

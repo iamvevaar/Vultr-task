@@ -30,7 +30,7 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="rounded-xl border border-border bg-surface-2 p-6 text-center">
+        <div className="rounded-xl bg-surface-2 p-6 text-center">
           <p className="text-sm text-muted-foreground">
             Something went wrong{this.props.label ? ` loading ${this.props.label}` : ""}.
           </p>

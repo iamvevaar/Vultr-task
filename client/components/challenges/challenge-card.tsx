@@ -6,7 +6,7 @@ export function ChallengeCard({ challenge }: { challenge: ChallengeWithProgress 
   const completed = challenge.progress.state === "completed";
 
   return (
-    <div className="rounded-xl border border-border bg-surface-2 p-4">
+    <div className="rounded-xl bg-surface-2 p-4">
       <div className="flex items-center gap-4">
         <div className="relative size-[72px] shrink-0">
           <ProgressRing percent={challenge.progress.percent} tone={completed ? "reward" : "primary"} />

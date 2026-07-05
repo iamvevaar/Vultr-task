@@ -26,7 +26,7 @@ export default function LeaderboardPage() {
 
   if (!user) {
     return (
-      <div className="mx-auto max-w-2xl rounded-xl border border-border bg-surface-2 p-8 text-center">
+      <div className="mx-auto max-w-2xl rounded-xl bg-surface-2 p-8 text-center">
         <p className="text-sm text-muted-foreground">Sign in to see the leaderboard.</p>
         <Button className="mt-3" onClick={() => authModal.open("login")}>
           Sign in
@@ -52,19 +52,19 @@ function LeaderboardContent({ meId }: { meId: string }) {
       {lb.isLoading ? (
         <div className="h-64 animate-pulse rounded-xl bg-surface-2" />
       ) : lb.isError ? (
-        <div className="flex items-center justify-between rounded-xl border border-border bg-surface-2 p-4">
+        <div className="flex items-center justify-between rounded-xl bg-surface-2 p-4">
           <span className="text-sm text-muted-foreground">Couldn&apos;t load the leaderboard.</span>
           <Button variant="outline" size="sm" onClick={() => lb.refetch()}>
             Retry
           </Button>
         </div>
       ) : !lb.data || lb.data.data.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border bg-surface-2/40 p-8 text-center text-sm text-muted-foreground">
+        <div className="rounded-xl bg-surface-2/40 p-8 text-center text-sm text-muted-foreground">
           No ranked members yet.
         </div>
       ) : (
         <>
-          <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface-2">
+          <ul className="divide-y divide-border overflow-hidden rounded-xl bg-surface-2">
             {lb.data.data.map((entry) => (
               <Row key={entry.user_id} entry={entry} isMe={entry.user_id === meId} />
             ))}

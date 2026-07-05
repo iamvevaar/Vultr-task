@@ -100,7 +100,7 @@ function Pagination({ meta, onPage }: { meta: PageMeta; onPage: (p: number) => v
 
 function ErrorState({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="rounded-xl border border-border bg-surface-2 p-8 text-center">
+    <div className="rounded-xl bg-surface-2 p-8 text-center">
       <p className="text-sm text-muted-foreground">Couldn&apos;t load the feed.</p>
       <Button variant="outline" size="sm" className="mt-3" onClick={onRetry}>
         Retry
@@ -111,7 +111,7 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
 
 function EmptyState() {
   return (
-    <div className="rounded-xl border border-dashed border-border bg-surface-2/40 p-10 text-center text-sm text-muted-foreground">
+    <div className="rounded-xl bg-surface-2/40 p-10 text-center text-sm text-muted-foreground">
       No threads yet — be the first to post.
     </div>
   );

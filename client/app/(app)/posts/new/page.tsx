@@ -34,7 +34,7 @@ export default function NewPostPage() {
   // Writes require auth — a guest who lands here directly gets a prompt.
   if (!user) {
     return (
-      <div className="mx-auto max-w-2xl rounded-xl border border-border bg-surface-2 p-8 text-center">
+      <div className="mx-auto max-w-2xl rounded-xl bg-surface-2 p-8 text-center">
         <p className="text-sm text-muted-foreground">You need to sign in to create a post.</p>
         <Button className="mt-3" onClick={() => authModal.open("login")}>
           Sign in

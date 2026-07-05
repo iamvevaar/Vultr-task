@@ -52,7 +52,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto flex h-screen w-full max-w-[1400px] overflow-hidden">
       {/* ---- Sidebar (Layer 1) — fixed full height, only main scrolls ---- */}
-      <aside className="m-4 hidden h-[calc(100vh-2rem)] w-60 shrink-0 flex-col overflow-y-auto rounded-lg border border-border bg-surface-1 p-4 md:flex">
+      <aside className="m-4 hidden h-[calc(100vh-2rem)] w-60 shrink-0 flex-col overflow-y-auto rounded-lg bg-surface-1 p-4 md:flex">
         <Link href="/" className="mb-6 flex items-center gap-2 px-1">
           <span className="fill-primary grid size-7 place-items-center rounded-md text-sm font-bold">V</span>
           <span className="text-base font-semibold">Vultr</span>
@@ -122,7 +122,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* ---- Right rail (Layer 1) — fixed full height ---- */}
-      <aside className="m-4 hidden h-[calc(100vh-2rem)] w-72 shrink-0 flex-col gap-4 overflow-y-auto rounded-lg border border-border bg-surface-1 p-4 lg:flex">
+      <aside className="m-4 hidden h-[calc(100vh-2rem)] w-72 shrink-0 flex-col gap-4 overflow-y-auto rounded-lg bg-surface-1 p-4 lg:flex">
         {/* Weekly widget is here in the shared layout → present on every page, polling live. */}
         <ErrorBoundary label="the weekly challenge">
           <WeeklyWidget />

@@ -69,7 +69,7 @@ export function PostDetail({ postId }: { postId: string }) {
         {user ? (
           <CommentForm postId={postId} />
         ) : (
-          <div className="flex items-center justify-between rounded-lg border border-border bg-surface-2 p-3">
+          <div className="flex items-center justify-between rounded-lg bg-surface-2 p-3">
             <span className="text-sm text-muted-foreground">Sign in to join the conversation.</span>
             <Button size="sm" onClick={() => authModal.open("login")}>
               Sign in
@@ -116,7 +116,7 @@ function PostSkeleton() {
 
 function ErrorState({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="mx-auto max-w-2xl rounded-xl border border-border bg-surface-2 p-8 text-center">
+    <div className="mx-auto max-w-2xl rounded-xl bg-surface-2 p-8 text-center">
       <p className="text-sm text-muted-foreground">Couldn&apos;t load this thread.</p>
       <Button variant="outline" size="sm" className="mt-3" onClick={onRetry}>
         Retry

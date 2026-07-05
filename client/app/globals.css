@@ -9,14 +9,14 @@
    ----------------------------------------------------------------------------
    Dark, "control-panel" aesthetic. The core idea is ELEVATION VIA LIGHTNESS:
    the app canvas is the darkest layer, and every surface stacked on top steps
-   ONE notch lighter (sidebar > card > input). Same hue (222°, cool slate),
-   same low saturation — only lightness changes. This is what gives depth
-   without shadows or borders doing the heavy lifting.
+   ONE notch lighter (sidebar > card > input). Neutral black (0% saturation) —
+   only lightness changes, so the surfaces read as pure dark, not tinted. This
+   is what gives depth without shadows or borders doing the heavy lifting.
 
-       Layer 0  canvas / app bg      L 7%    ← darkest
-       Layer 1  sidebar / right rail L 10%
-       Layer 2  cards / panels       L 13%
-       Layer 3  inputs / hover/chips L 17%   ← lightest
+       Layer 0  canvas / app bg      L 4%    ← darkest
+       Layer 1  sidebar / right rail L 6%
+       Layer 2  cards / panels       L 8%
+       Layer 3  inputs / hover/chips L 10%   (headroom above for more layers)
 
    Two accents, each with MEANING (not decoration):
        blue  → brand, links, primary actions
@@ -86,10 +86,11 @@
   --font-display: var(--ff-display), var(--ff-sans), sans-serif;
 
   /* --- Elevation ramp (same hue/sat, rising lightness) --- */
-  --background: hsl(222 24% 7%); /* Layer 0 — canvas */
-  --surface-1: hsl(222 20% 10%); /* Layer 1 — sidebar / rail */
-  --surface-2: hsl(222 18% 13%); /* Layer 2 — cards */
-  --surface-3: hsl(222 16% 17%); /* Layer 3 — inputs / hover / chips */
+  --background: hsl(0 0% 4%);   /* Layer 0 — canvas (darkest) */
+  --surface-1: hsl(0 0% 6%);    /* Layer 1 — sidebar / rail */
+  --surface-2: hsl(0 0% 8%);    /* Layer 2 — cards */
+  --surface-3: hsl(0 0% 10%);   /* Layer 3 — inputs / hover / chips */
+  /* ~2% steps → subtle stack, leaving headroom (12%, 14%…) for future layers */
 
   /* --- Text (high / medium / low emphasis) --- */
   --foreground: hsl(220 22% 96%);

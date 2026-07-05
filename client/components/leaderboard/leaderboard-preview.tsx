@@ -11,7 +11,7 @@ const MEDALS = ["🥇", "🥈", "🥉"];
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-border bg-surface-2 p-4">
+    <div className="rounded-xl bg-surface-2 p-4">
       <div className="flex items-center justify-between">
         <p className="text-xs font-medium uppercase tracking-widest text-subtle">Top members</p>
         <Link href="/leaderboard" className="text-xs text-primary hover:underline">
@@ -28,7 +28,7 @@ export function LeaderboardPreview() {
   // Leaderboard is auth-gated; only render the query for logged-in users.
   if (!user) {
     return (
-      <div className="rounded-xl border border-border bg-surface-2 p-4">
+      <div className="rounded-xl bg-surface-2 p-4">
         <p className="text-xs font-medium uppercase tracking-widest text-subtle">Top members</p>
         <p className="mt-2 text-sm text-muted-foreground">Sign in to see the leaderboard.</p>
       </div>

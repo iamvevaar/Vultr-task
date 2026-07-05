@@ -20,7 +20,7 @@ function daysUntilMonday(): number {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  return <div className="rounded-xl border border-border bg-surface-2 p-4">{children}</div>;
+  return <div className="rounded-xl bg-surface-2 p-4">{children}</div>;
 }
 
 export function WeeklyWidget() {

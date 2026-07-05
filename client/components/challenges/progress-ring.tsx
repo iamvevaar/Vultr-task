@@ -34,7 +34,7 @@ export function ProgressRing({
       {/* Maps value 0..100 onto the arc sweep. */}
       <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
       <RadialBar
-        background={{ fill: "hsl(222 16% 17%)" }} /* the track = surface-3 */
+        background={{ fill: "var(--surface-3)" }} /* the track = surface-3 (follows the theme) */
         dataKey="value"
         cornerRadius={10}
         fill={color}

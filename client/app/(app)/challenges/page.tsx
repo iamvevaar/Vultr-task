@@ -16,7 +16,7 @@ export default function ChallengesPage() {
   // Challenges are per-user, so this page requires auth.
   if (!user) {
     return (
-      <div className="mx-auto max-w-3xl rounded-xl border border-border bg-surface-2 p-8 text-center">
+      <div className="mx-auto max-w-3xl rounded-xl bg-surface-2 p-8 text-center">
         <p className="text-sm text-muted-foreground">Sign in to see your challenges and progress.</p>
         <Button className="mt-3" onClick={() => authModal.open("login")}>
           Sign in
@@ -67,7 +67,7 @@ function ChallengesContent() {
         ) : streaks.isError ? (
           <ErrorRow label="streaks" onRetry={() => streaks.refetch()} />
         ) : (
-          <div className="rounded-xl border border-border bg-surface-2 p-4">
+          <div className="rounded-xl bg-surface-2 p-4">
             <div className="mb-4 flex gap-6">
               {(() => {
                 const commentStreak = streaks.data?.streaks.find((s) => s.event_type === "comment_posted");
@@ -94,7 +94,7 @@ function ChallengesContent() {
         ) : !weekly.data ? (
           <Empty>No weekly challenge running right now.</Empty>
         ) : (
-          <div className="rounded-xl border border-border bg-surface-2 p-4">
+          <div className="rounded-xl bg-surface-2 p-4">
             <ChallengeCard challenge={weekly.data} />
             <p className="mt-3 text-xs text-subtle">Resets Monday.</p>
           </div>
@@ -127,7 +127,7 @@ function Stat({ label, value, unit }: { label: string; value: number; unit: stri
 
 function Empty({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-dashed border-border bg-surface-2/40 p-8 text-center text-sm text-muted-foreground">
+    <div className="rounded-xl bg-surface-2/40 p-8 text-center text-sm text-muted-foreground">
       {children}
     </div>
   );
@@ -135,7 +135,7 @@ function Empty({ children }: { children: React.ReactNode }) {
 
 function ErrorRow({ label, onRetry }: { label: string; onRetry: () => void }) {
   return (
-    <div className="flex items-center justify-between rounded-xl border border-border bg-surface-2 p-4">
+    <div className="flex items-center justify-between rounded-xl bg-surface-2 p-4">
       <span className="text-sm text-muted-foreground">Couldn&apos;t load {label}.</span>
       <Button variant="outline" size="sm" onClick={onRetry}>
         Retry

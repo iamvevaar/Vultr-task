@@ -31,8 +31,8 @@ export function CommentItem({
     <div>
       <div
         className={cn(
-          "rounded-lg border p-3",
-          comment.is_solution ? "border-success/40 bg-success/5" : "border-border bg-surface-2"
+          "rounded-lg p-3",
+          comment.is_solution ? "border border-success/40 bg-success/5" : "bg-surface-2"
         )}
       >
         <div className="flex items-center gap-2 text-xs">
