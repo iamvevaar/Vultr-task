@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_current_user
 from app.core.database import get_db
 from app.models.reward import UserPoints
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.schemas.common import PageMeta
 from app.schemas.leaderboard import LeaderboardEntry, PaginatedLeaderboard
 
@@ -25,7 +25,10 @@ def leaderboard(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    total = db.scalar(select(func.count()).select_from(User)) or 0
+    # Admins provision challenges; they don't play → exclude them from rankings.
+    total = db.scalar(
+        select(func.count()).select_from(User).where(User.role == UserRole.user)
+    ) or 0
 
     # Users may not have a points row yet → COALESCE to 0 so everyone is ranked.
     points = func.coalesce(UserPoints.total_points, 0)
@@ -34,6 +37,7 @@ def leaderboard(
     rows = db.execute(
         select(User.id, User.username, points.label("total_points"))
         .outerjoin(UserPoints, UserPoints.user_id == User.id)
+        .where(User.role == UserRole.user)
         .order_by(points.desc(), User.id.asc())  # ties broken by id
         .offset(offset)
         .limit(limit)
