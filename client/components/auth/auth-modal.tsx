@@ -12,7 +12,7 @@
 import { createContext, useContext, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { apiFetch } from "@/lib/api";
+import { apiFetch, getErrorMessage } from "@/lib/api";
 import type { AuthResponse } from "@/lib/types";
 import { ME_QUERY_KEY } from "@/hooks/use-current-user";
 import {
@@ -145,7 +145,7 @@ function AuthModal({
           </div>
 
           {submit.isError && (
-            <p className="text-sm text-destructive">{(submit.error as Error).message}</p>
+            <p className="text-sm text-destructive">{getErrorMessage(submit.error)}</p>
           )}
 
           <Button type="submit" className="w-full" disabled={submit.isPending}>

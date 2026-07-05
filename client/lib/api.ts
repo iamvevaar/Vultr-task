@@ -29,6 +29,29 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Turn any thrown error into a precise, user-facing message.
+ * - Validation (422): surface the first field-level detail (e.g. the password rule).
+ * - Other ApiErrors: use the backend's message (login stays generic on purpose).
+ * - Network/unexpected: a friendly fallback (never a raw "Failed to fetch").
+ */
+export function getErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    if (error.code === "VALIDATION_ERROR" && Array.isArray(error.details) && error.details.length > 0) {
+      const first = error.details[0] as { loc?: unknown[]; msg?: string };
+      const field = Array.isArray(first.loc) ? String(first.loc[first.loc.length - 1]) : "";
+      let msg = first.msg ?? "Invalid input";
+      // Soften Pydantic's phrasing a little.
+      msg = msg
+        .replace(/^String should have/i, "Must have")
+        .replace(/^value is not a valid email address.*/i, "Enter a valid email address");
+      return field ? `${field[0].toUpperCase()}${field.slice(1)}: ${msg}` : msg;
+    }
+    return error.message;
+  }
+  return "Something went wrong. Please try again.";
+}
+
 export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers);
   headers.set("Content-Type", "application/json");
