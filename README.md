@@ -5,6 +5,8 @@ A **Challenge & Rewards Engine** (FastAPI + PostgreSQL) integrated with a
 forum: it knows only about **events → challenges → progress → rewards**. The
 forum emits events; the engine evaluates them asynchronously and grants rewards.
 
+**🌐 Live demo — deployed entirely on Vultr Cloud Instance:** https://vultr-task.vevaar.com
+
 ---
 
 ## Overview
@@ -493,13 +495,24 @@ docker-compose.yml      db + api + worker
 
 ## Deployment
 
-The app is designed for a single host: `docker compose` runs Postgres + API +
-worker; the Next.js frontend is built and served behind a reverse proxy (Caddy)
-that terminates TLS and proxies `/api` to the backend. For production set
-`COOKIE_SECURE=true`, a strong `JWT_SECRET`, and `CORS_ORIGINS` to the deployed
-frontend URL.
+**The entire application is deployed on a single Vultr VPS** — live at
+**https://vultr-task.vevaar.com**. Everything runs on Vultr's own compute: the
+Next.js frontend, the FastAPI API, the background worker, and PostgreSQL — all as
+Docker Compose services on one Vultr instance, behind **Caddy** as the reverse
+proxy. Caddy auto-provisions and renews the Let's Encrypt TLS certificate and
+proxies `/api` to the backend on the **same origin** (which is why the httpOnly
+auth cookie works without any CORS gymnastics).
 
-*(Deployment target: Vultr — see submission link / walkthrough.)*
+Deploy config lives in the repo: `docker-compose.prod.yml`, `Caddyfile`,
+`client/Dockerfile`, and `.env.prod.example`. Production settings:
+`COOKIE_SECURE=true`, a strong random `JWT_SECRET`, and `CORS_ORIGINS` set to the
+deployed URL.
+
+Deploy / redeploy on the box:
+
+```bash
+git pull && docker compose -f docker-compose.prod.yml up -d --build
+```
 
 ---
 
