@@ -11,6 +11,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Home, LogOut, Medal, Plus, Trophy, User } from "lucide-react";
 
@@ -22,6 +23,13 @@ import { WeeklyWidget } from "@/components/challenges/weekly-widget";
 import { LeaderboardPreview } from "@/components/leaderboard/leaderboard-preview";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const NAV = [
   { label: "Feed", href: "/", icon: Home, requiresAuth: false },
@@ -35,6 +43,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { data: user } = useCurrentUser();
   const authModal = useAuthModal();
   const queryClient = useQueryClient();
+
+  const [confirmLogout, setConfirmLogout] = useState(false);
 
   const logout = useMutation({
     mutationFn: () => apiFetch("/auth/logout", { method: "POST" }),
@@ -104,7 +114,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <p className="truncate text-sm font-medium">{user.username}</p>
                 <p className="text-xs text-subtle">{user.role}</p>
               </div>
-              <Button variant="ghost" size="icon-sm" title="Log out" onClick={() => logout.mutate()}>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                title="Log out"
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => setConfirmLogout(true)}
+              >
                 <LogOut className="size-4" />
               </Button>
             </div>
@@ -131,6 +147,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <LeaderboardPreview />
         </ErrorBoundary>
       </aside>
+
+      {/* Logout confirmation */}
+      <Dialog open={confirmLogout} onOpenChange={setConfirmLogout}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Log out?</DialogTitle>
+            <DialogDescription>
+              You&apos;ll need to sign in again to post, comment, or track your challenges.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setConfirmLogout(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                logout.mutate();
+                setConfirmLogout(false);
+              }}
+            >
+              Log out
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
